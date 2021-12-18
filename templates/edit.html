@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${static_domain}/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="${static_domain}/css/toastr.min.css">
+        <script src="${static_domain}/js/angular.js"></script>
+        <title>Login Project</title>
+    </head>
+<body ng-app="myApp" ng-cloak>
+    <div class="container" ng-controller="mainCtrl">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="margin-top: 100px;">
+                <div class="card text-white mb-3" style="max-width: 40rem;">
+                    <div class="card-header bg-secondary text-center"><h2>Thông tin về  ${user_by_id.name}</h2></div>
+                    <div class="card-body" style="border: 1px solid #6c757d;">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Fullname:</label>
+                                <input type="text" ng-model="name" class="form-control" id="name" placeholder="Fullname">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Birthday: </label>
+                                <input type="date" value="${birthday}" class="form-control" id="birthday">
+                                <!-- <input type="date" ng-model="birthday" value="2014-02-09" class="form-control" id="birthday"> -->
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Select your favorite color:</label>
+                                <input type="color" value="${user_by_id.favoriteColor}" style="width: 50px;" class="form-control" id="favcolor">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Email:</label>
+                                <input type="email" ng-model="email" class="form-control"  id="email" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Password:</label>
+                                <input type="password" ng-model="password" class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="mb-2" style="color:black">Avatar:</label>
+                                <br>
+                                <input ng-model="image" type="file" file="filex" name="file2" id="preImg" style="color: black;" accept="image/*" />
+                                <input type="text" value="${user_by_id.avatar}"  name="file" id="preImgOld" style="color: black;" accept="image/*" hidden/>
+                                <br />
+                                <img id="blah" src="../${user_by_id.avatar}" class="mt-2" onerror="this.style.display = 'none'" alt="your image" width="100px" />
+                                
+                                <br>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" ng-click="saveDataEdit()" class="btn btn-secondary" style="margin: 0px 260px;">Save</button>
+                            </div>
+                        </form> 
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+    <script src="${static_domain}/js/bootstrap.bundle.js"></script>
+    <script src="${static_domain}/js/jquery-3.6.0.js"></script>
+    <script src="${static_domain}/js/notification.js"></script>
+    <script src="${static_domain}/js/toastr.min.js"></script>
+    <script>
+        var app = angular.module('myApp', []); //ngPagination
+        app.directive('file', function() {
+            return {
+                scope: {
+                    file: '='
+                },
+                link: function(scope, el, attrs) {
+                    el.bind('change', function(event) {
+                        var file = event.target.files[0];
+                        scope.file = file ? file : undefined;
+                        scope.$apply();
+                    });
+                }
+            };
+        });
+        app.controller('mainCtrl', function($scope, $http) {
+            $scope.APP_DOMAIN = "${app_domain}/";
+            preImg.onchange = evt => {
+                const [file] = preImg.files
+                if (file) {
+                    blah.src = URL.createObjectURL(file)
+                    blah.style = "block";
+                }
+            }
+            
+            //getIdUser (put server)
+            $http({
+                method: "GET",
+                url: $scope.APP_DOMAIN + "api/register",
+                params: {
+                    action: 'getUserById',
+                    id_user: ${id_user}
+
+                },
+            }).then(function(response) {
+                // console.log(response);
+                $scope.editUser = response.data.data;
+                console.log($scope.editUser);
+                $scope.id = $scope.editUser.id;
+                $scope.name = $scope.editUser.name;
+                $scope.favcolor = $scope.editUser.favcolor;
+                $scope.email = $scope.editUser.email;
+                $scope.password = $scope.editUser.password;
+
+            })
+
+            $scope.saveDataEdit = function() { //item hay biến khác cũng được, không cần phải trùng tên với bên user
+                //lấy dữ liệu về
+                var birthday = document.getElementById("birthday").value;
+                var date = (new Date(birthday)).getTime();
+                // myDate = myDate.split("-");
+                // var newDate = new Date( myDate[2], myDate[1]-1, myDate[0]);
+                // console.log("Thoi gian: " + newDate.getTime());
+
+                var favcolor= document.getElementById("favcolor").value;
+                var image = $scope.filex
+                var oldAvatar = document.getElementById("preImgOld").value;
+                console.log(birthday,favcolor,image, $scope.name, $scope.email, $scope.password);
+                if ($scope.name) {
+                    $http({
+                        method: 'POST',
+                        url: $scope.APP_DOMAIN + 'api/register?action=edit',
+                        headers: {
+                            'content-type': undefined
+                        },
+                        data: {
+                            id: $scope.id,
+                            name: $scope.name,
+                            birthday: date,
+                            favColor: favcolor,
+                            email: $scope.email,
+                            password: $scope.password,
+                            image: image,
+                            oldAvatar:oldAvatar
+                        },
+
+                        transformRequest: function(data, headersGetter) {
+                            console.log(data);
+                            var formData = new FormData();
+                            angular.forEach(data, function(value, key) {
+                                formData.append(key, value);
+                            });
+
+                            return formData;
+
+                        }
+                    }).then(function(response) {
+                        if (response.data.errorCode >= 0) {
+                            console.log(response);
+                            showNotification("success", response.data.message);
+                            window.location.replace($scope.APP_DOMAIN + "home");
+                        } else {
+                            showNotification("error", response.data.message);
+                        }
+                    }, function(error) {
+                        showNotification("error", "Có lỗi! Vui lòng thử lại sau.");
+
+                    })
+                } else {
+                    showNotification("error", "Dữ liệu không hợp lệ!");
+                }
+
+            }
+
+        })
+    </script>
+
+</body>
+</html>

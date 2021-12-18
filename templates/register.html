@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${static_domain}/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="${static_domain}/css/toastr.min.css">
+        <script src="${static_domain}/js/angular.js"></script>
+        
+        <title>Login Project</title>
+    </head>
+<body ng-app="myApp" ng-cloak>
+    <div class="container" ng-controller="mainCtrl">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="margin-top: 100px;">
+                <div class="card text-white mb-3" style="max-width: 35rem;">
+                    <div class="card-header bg-secondary text-center"><h2>Đăng ký</h2></div>
+                    <div class="card-body" style="border: 1px solid #6c757d;">
+                        <form>
+                            <div class="mb-3"> 
+                                <label class="form-label" style="color: black;">Fullname:</label>
+                                <input type="text" ng-model="name" class="form-control" id="name" placeholder="Fullname">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Birthday:</label>
+                                <input type="date" ng-model="birthday" class="form-control" id="birthday">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Select your favorite color:</label>
+                                <input type="color" ng-model="favcolor" style="width: 50px;" class="form-control" id="favcolor" value="#ff0000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Email:</label>
+                                <input type="email"  ng-model="email" class="form-control" id="email" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Password:</label>
+                                <input type="password" ng-model="password" class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="mb-2" style="color:black">Avatar:</label>
+                                <br>
+                                <input type="file" file="filex" name="file2" id="preImg" style="color: black;" accept="image/*" required />
+                                <br />
+                                <img id="blah" src="#" class="mt-2" alt="your image" onerror="this.style.display = 'none'" width="100px" />
+                                <br>
+                            </div>
+                            <div class="mb-3">
+                                <button ng-click="addUser()" type="submit" class="btn btn-secondary" style="margin: 0px 210px;">Đăng ký</button>
+                            </div>
+                            <div class="mb-3 text-center">
+                                <p style="color: black;">Bạn đã có tài khoản? <a style="text-decoration: none;" href="/login">Đăng nhập</a></p>
+                            </div>
+                        </form> 
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+    </div>
+    <!-- <script src="${static_domain}/js/popper.min.js"></script> -->
+    <script src="${static_domain}/js/bootstrap.bundle.js"></script>
+    <script src="${static_domain}/js/jquery-3.6.0.js"></script>
+    <script src="${static_domain}/js/notification.js"></script>
+    <script src="${static_domain}/js/toastr.min.js"></script>
+    <script>
+        // imgInp.onchange = evt => {
+        //     const [file] = imgInp.files
+        //     if (file) {
+        //     blah.src = URL.createObjectURL(file)
+        //     blah.style = "block";
+        //     blah.style = "width: 100px"
+        //     }
+        // }
+
+        var app = angular.module('myApp', []); 
+        app.directive('file', function() {
+            return {
+                scope: {
+                    file: '='
+                },
+                link: function(scope, el, attrs) {
+                    el.bind('change', function(event) {
+                        var file = event.target.files[0];
+                        scope.file = file ? file : undefined;
+                        scope.$apply();
+                    });
+                }
+            };
+        });
+        app.controller('mainCtrl', function($scope, $http) {
+            $scope.APP_DOMAIN = "${app_domain}/";
+            preImg.onchange = evt => {
+                const [file] = preImg.files
+                if (file) {
+                    blah.src = URL.createObjectURL(file)
+                    blah.style = "block";
+                }
+            }
+            $scope.addUser = function() {
+                var image = $scope.filex
+                console.log(image);
+                if ($scope.name && $scope.birthday && $scope.favcolor && $scope.email && $scope.password) {
+                    $http({
+                        method: 'POST',
+                        url: $scope.APP_DOMAIN + 'api/register?action=add',
+                        headers: {
+                            'content-type': undefined
+                        },
+                        data: {
+                            name: $scope.name,
+                            birthday: $scope.birthday.getTime(),
+                            favColor: $scope.favcolor,
+                            email: $scope.email,
+                            password: $scope.password,
+                            image: image
+
+                        },
+
+                        transformRequest: function(data, headersGetter) {
+                            console.log(data);
+                            var formData = new FormData();
+                            angular.forEach(data, function(value, key) {
+                                formData.append(key, value);
+                            });
+
+                            return formData;
+
+                        }
+                    })
+                    .then(function(response) {
+                        if (response.data.errorCode < 0) {
+                            showNotification("error", response.data.message);
+                        } else {
+                            console.log(response);
+                            $scope.name = "";
+                            $scope.birthday = "";
+                            $scope.favcolor = "";
+                            $scope.email = "";
+                            $scope.password = "";
+                            $("#blah").css("display", "none");
+                            $('#preImg').val('');
+                            showNotification("success", response.data.message);
+                            window.location.replace($scope.APP_DOMAIN + "login");
+                        }
+
+                    })
+                    
+                } else {
+                    showNotification("error", "Dữ liệu không hợp lệ!");
+                }
+            }
+
+
+        })
+    </script>
+</body>
+</html>

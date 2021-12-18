@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${static_domain}/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="${static_domain}/css/toastr.min.css">
+        <script src="${static_domain}/js/angular.js"></script>
+        
+        <title>Login Project</title>
+    </head>
+    <body ng-app="myApp" ng-cloak>
+    <div class="container" ng-controller="mainCtrl">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="margin-top: 100px;">
+                <div class="card text-white mb-3" style="max-width: 30rem;">
+                    <div class="card-header bg-secondary text-center"><h2>Đăng nhập</h2></div>
+                    <div class="card-body" style="border: 1px solid #6c757d;">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Email:</label>
+                                <input ng-model="user.email" type="email" class="form-control" id="email" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Password:</label>
+                                <input type="password"  ng-model="user.password" class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" ng-click="login(user)" class="btn btn-secondary" style="margin: 0px 160px;">Đăng nhập</button>
+                            </div>
+                            <div class="mb-3 text-center">
+                                <p style="color: black;">Bạn chưa có tài khoản? <a style="text-decoration: none;" href="/register">Đăng ký</a></p>
+                            </div>
+                        </form> 
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+    <script src="${static_domain}/js/bootstrap.bundle.js"></script>
+    <script src="${static_domain}/js/jquery-3.6.0.js"></script>
+    <script src="${static_domain}/js/notification.js"></script>
+    <script src="${static_domain}/js/toastr.min.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('mainCtrl', function($scope, $http) {
+            $scope.APP_DOMAIN = "${app_domain}/";
+            $scope.login = function(user) {
+                if(user.email && user.password){
+                    var data = $.param({
+                        email: user.email,
+                        password: user.password
+                    });
+                    console.log(data);
+                    var config = {
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                        }
+                    }
+                    $http.post($scope.APP_DOMAIN + 'login?action=login', data, config)
+                        .then(function(response) {
+                            if (response.data.errorCode >= 0) {
+                                showNotification("success", response.data.message);
+                                window.location.replace($scope.APP_DOMAIN + "home");
+                            } else {
+                                showNotification("error", response.data.message);
+                            }
+                        })
+                } else {
+                    showNotification("error", "Dữ liệu không hợp lệ!");
+                }
+                
+            }
+        });
+    </script>
+</body>
+</html>

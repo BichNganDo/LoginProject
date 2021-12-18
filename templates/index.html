@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${static_domain}/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="${static_domain}/css/toastr.min.css">
+        <script src="${static_domain}/js/angular.js"></script>
+        <title>Login Project</title>
+    </head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="margin-top: 100px;">
+                <div class="card text-white mb-3" style="max-width: 40rem;">
+                    <div class="card-header bg-secondary text-center"><h2>Thông tin về  ${user_by_id.name}</h2></div>
+                    <div class="card-body" style="border: 1px solid #6c757d;">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Fullname:</label>
+                                <input type="text" class="form-control" value="${user_by_id.name}" disabled id="name" placeholder="Fullname">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Birthday: </label>
+                                <input type="date" value="${birthday}" class="form-control" id="birthday" disabled>
+                                <!-- <input type="date" ng-model="birthday" value="2014-02-09" class="form-control" id="birthday"> -->
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Select your favorite color:</label>
+                                <input type="color" style="width: 50px;" class="form-control" disabled id="favcolor" value="${user_by_id.favoriteColor}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Email:</label>
+                                <input type="email" value="${user_by_id.email}" class="form-control"  disabled id="email" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Password:</label>
+                                <input type="password" value="${user_by_id.password}" disabled class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <div class="mb-3">
+                                <label class="mb-2" style="color:black">Avatar:</label>
+                                <br>
+                                <img id="blah" src="../${user_by_id.avatar}" class="mt-2" onerror="this.style.display = 'none'" alt="your image" width="100px" />
+                                <br>
+                            </div>
+                            <div class="mb-3">
+                                <a href="/register/edit"><button type="button" class="btn btn-secondary" style="margin: 0px 260px;">Edit</button></a>
+                            </div>
+                        </form> 
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+    <script src="${static_domain}/js/bootstrap.bundle.js"></script>
+    <script src="${static_domain}/js/jquery-3.6.0.js"></script>
+    <script src="${static_domain}/js/notification.js"></script>
+    <script src="${static_domain}/js/toastr.min.js"></script>
+    <script>
+    </script>
+
+</body>
+</html>
