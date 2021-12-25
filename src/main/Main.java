@@ -10,9 +10,14 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import servlets.EditByFormServlet;
 import servlets.EditServlet;
+import servlets.HomeFormServlet;
 import servlets.HomeServlet;
+import servlets.LoginByFormServlet;
 import servlets.LoginServlet;
+import servlets.LogoutServlet;
+import servlets.RegisterByFormServlet;
 import servlets.RegisterServlet;
 import servlets.api.APIRegisterServlet;
 
@@ -22,11 +27,16 @@ public class Main {
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-        context.addServlet(new ServletHolder(new HomeServlet()), "/home");
-        context.addServlet(new ServletHolder(new RegisterServlet()), "/register");
-        context.addServlet(new ServletHolder(new EditServlet()), "/register/edit");
+//        context.addServlet(new ServletHolder(new HomeServlet()), "/home");
+//        context.addServlet(new ServletHolder(new RegisterServlet()), "/register");
+//        context.addServlet(new ServletHolder(new EditServlet()), "/register/edit");
+//        context.addServlet(new ServletHolder(new LoginByFormServlet()), "/login");
+//        context.addServlet(new ServletHolder(new APIRegisterServlet()), "/api/register");
+        context.addServlet(new ServletHolder(new HomeFormServlet()), "/home");
+        context.addServlet(new ServletHolder(new RegisterByFormServlet()), "/register");
+        context.addServlet(new ServletHolder(new EditByFormServlet()), "/register/edit");
         context.addServlet(new ServletHolder(new LoginServlet()), "/login");
-        context.addServlet(new ServletHolder(new APIRegisterServlet()), "/api/register");
+        context.addServlet(new ServletHolder(new LogoutServlet()), "/logout");
 
         FilterHolder authenFilter = new FilterHolder(new AuthenFilter());
         authenFilter.setName("AuthenFilter");

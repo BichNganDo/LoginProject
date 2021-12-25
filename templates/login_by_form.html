@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${static_domain}/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="${static_domain}/css/toastr.min.css">
+        <script src="${static_domain}/js/angular.js"></script>
+        
+        <title>Login Project</title>
+    </head>
+    <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="margin-top: 100px;">
+                <div class="card text-white mb-3" style="max-width: 30rem;">
+                    <div class="card-header bg-secondary text-center"><h2>Đăng nhập</h2></div>
+                    <div class="card-body" style="border: 1px solid #6c757d;">
+                        <form action="/login" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Email:</label>
+                                <input name="email" type="email" class="form-control" id="email" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" style="color: black;">Password:</label>
+                                <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <div class="mb-3">
+                                <p style="color: red;">${error_message}</p>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-secondary" style="margin: 0px 160px;">Đăng nhập</button>
+                            </div>
+                            <div class="mb-3 text-center">
+                                <p style="color: black;">Bạn chưa có tài khoản? <a style="text-decoration: none;" href="/register">Đăng ký</a></p>
+                            </div>
+                        </form> 
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+    <script src="${static_domain}/js/bootstrap.bundle.js"></script>
+    <script src="${static_domain}/js/jquery-3.6.0.js"></script>
+    <script src="${static_domain}/js/notification.js"></script>
+    <script src="${static_domain}/js/toastr.min.js"></script>
+    
+</body>
+</html>

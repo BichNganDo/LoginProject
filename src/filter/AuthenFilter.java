@@ -7,6 +7,7 @@ import helper.HttpHelper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -41,17 +42,27 @@ public class AuthenFilter implements Filter {
 
             String path = req.getServletPath();
 
-            if (!"/login".equals(path)) {
-                int idUser = JWTModel.INSTANCE.getIdUser(req);
-                if (idUser > 0) {
-                    fc.doFilter(request, response);
-                    return;
-                } else {
-                    resp.sendRedirect(Config.APP_DOMAIN + "/login");
-                    return;
-                }
-            } else {
+            ArrayList<String> array = new ArrayList<>();
+            array.add("/login");
+            array.add("/register");
+
+            if (array.contains(path)) {
                 fc.doFilter(request, response);
+                return;
+            } else {
+                String authenCookie = HttpHelper.getCookie(req, "authen");
+                if (StringUtils.isNotEmpty(authenCookie)) {
+                    Jws<Claims> user = JWTModel.INSTANCE.parseJwt(authenCookie);
+                    if (user != null) {
+                        Object idObject = user.getBody().get("id");
+                        int idUser = Integer.parseInt(idObject.toString());
+                        if (idUser > 0) {
+                            fc.doFilter(request, response);
+                            return;
+                        }
+                    }
+                }
+                resp.sendRedirect(Config.APP_DOMAIN + "/login");
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
